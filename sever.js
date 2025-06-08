@@ -2,7 +2,8 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import margon from "morgan";
+import morgan from "morgan";
+import { productRouter } from "./products/routes/index.js";
 
 // Express 앱 객체 생성 (이게 서버의 본체)
 const app = express();
@@ -20,6 +21,8 @@ await mongoose.connect(DB_CONNECTION_URL);
 app.get("/", (req, res) => {
   res.send("판다마켓 서버 연결됨");
 });
+
+app.use("/products", productRouter);
 
 app.listen(PORT, () => {
   console.log("server start...");
