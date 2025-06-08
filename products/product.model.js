@@ -21,11 +21,6 @@ const productSchema = new Schema(
       type: [String],
       default: [],
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     isSold: {
       type: Boolean,
       default: false,

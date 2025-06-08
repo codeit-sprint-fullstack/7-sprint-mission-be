@@ -2,11 +2,14 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import margon from "morgan";
 
 // Express 앱 객체 생성 (이게 서버의 본체)
 const app = express();
 // 모든 요청에 대해 CORS 허용
 app.use(cors());
+//터미널에 로그를 찍어주는 미들웨어
+app.use(morgan("dev"));
 // 요청 body가 JSON일 경우 파싱해서 req.body에 넣어줌
 app.use(express.json());
 
