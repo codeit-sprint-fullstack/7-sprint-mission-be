@@ -16,6 +16,11 @@ class ProductRepository {
   async updateProductById(id, updateData) {
     return await Product.findByIdAndUpdate(id, updateData, { new: true });
   }
+
+  // ID기반 상품 삭제
+  async deleteProductById(id) {
+    return await Product.findByIdAndDelete(id);
+  }
 }
 
 export default new ProductRepository();

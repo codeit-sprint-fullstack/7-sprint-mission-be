@@ -71,5 +71,18 @@ class ProductService {
     }
     return updatedProduct;
   };
+
+  // ID 기반 상품 삭제 서비스 로직
+  deleteProductById = async (id) => {
+    validateObjectId(id);
+
+    const deletedProduct = await productRepository.deleteProductById(id);
+
+    if (!deletedProduct) {
+      const error = new Error("해당 ID의 상품이 존재하지 않습니다.");
+      throw error;
+    }
+    return deletedProduct;
+  };
 }
 export default new ProductService(productRepository);

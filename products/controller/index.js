@@ -35,6 +35,7 @@ class ProductController {
     }
   };
 
+  //Patch /products/:id - 상품수정
   updateProductById = async (req, res, next) => {
     try {
       const id = req.params.id;
@@ -49,6 +50,18 @@ class ProductController {
       });
 
       return res.status(200).json(updatedProduct);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  //Delete /products/:id - 상품삭제
+  deleteProductById = async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const deletedProduct = await this.productService.deleteProductById(id);
+
+      return res.status(200).json(deletedProduct);
     } catch (err) {
       next(err);
     }
