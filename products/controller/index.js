@@ -66,6 +66,27 @@ class ProductController {
       next(err);
     }
   };
+
+  //Get /products - 상품조회
+  getProducts = async (req, res, next) => {
+    try {
+      const offset = Number(req.query.offset) || 0;
+      const limit = Number(req.query.limit) || 10;
+      const orderBy = req.query.orderBy || "recent";
+      const search = req.query.search || "";
+
+      const products = await this.productService.getProducts({
+        offset,
+        limit,
+        orderBy,
+        search,
+      });
+
+      return res.status(200).json(products);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new ProductController(productService);

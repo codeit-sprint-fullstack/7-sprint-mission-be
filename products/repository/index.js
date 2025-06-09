@@ -21,6 +21,14 @@ class ProductRepository {
   async deleteProductById(id) {
     return await Product.findByIdAndDelete(id);
   }
+
+  // 상품조회
+  async getProducts({ whereCondition, sortCondition, offset, limit }) {
+    return await Product.find(whereCondition)
+      .sort(sortCondition)
+      .skip(offset)
+      .limit(limit);
+  }
 }
 
 export default new ProductRepository();

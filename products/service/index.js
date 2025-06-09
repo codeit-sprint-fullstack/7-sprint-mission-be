@@ -84,5 +84,39 @@ class ProductService {
     }
     return deletedProduct;
   };
+
+  // 상품 조회 서비스 로직
+  getProducts = async ({ offset, limit, orderBy, search }) => {
+    // 정렬 기준 유효성 검사
+    const validOrders = ["recent", "oldest"];
+    if (!validOrders.includes(orderBy)) {
+      const error = new Error("잘못된 정렬 기준입니다.");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // 검색 조건 구성
+    const whereCondition = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    // 정렬 조건 구성
+    const sortCondition =
+      orderBy === "recent" ? { createdAt: -1 } : { createdAt: 1 };
+
+    const products = await productRepository.getProducts({
+      whereCondition,
+      sortCondition,
+      offset,
+      limit,
+    });
+
+    return products;
+  };
 }
 export default new ProductService(productRepository);
