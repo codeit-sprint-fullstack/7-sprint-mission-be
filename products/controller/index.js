@@ -34,6 +34,25 @@ class ProductController {
       next(err);
     }
   };
+
+  updateProductById = async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const { title, imageUrl, description, price, tags } = req.body;
+
+      const updatedProduct = await this.productService.updateProductById(id, {
+        title,
+        imageUrl,
+        description,
+        price,
+        tags,
+      });
+
+      return res.status(200).json(updatedProduct);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new ProductController(productService);

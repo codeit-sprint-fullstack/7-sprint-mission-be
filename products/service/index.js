@@ -43,5 +43,33 @@ class ProductService {
     }
     return product;
   };
+
+  // ID 기반 상품 수정 서비스 로직
+  updateProductById = async (
+    id,
+    { title, imageUrl, description, price, tags }
+  ) => {
+    validateObjectId(id);
+    validateStringField(title, "title");
+    validateStringField(imageUrl, "imageUrl");
+    validateStringField(description, "description");
+    validateNumberField(price, "price");
+    validateStringArray(tags, "tags");
+
+    const updatedProduct = await productRepository.updateProductById(id, {
+      title,
+      imageUrl,
+      description,
+      price,
+      tags,
+    });
+
+    if (!updatedProduct) {
+      const error = new Error("해당 ID의 상품이 존재하지 않습니다.");
+      error.statusCode = 404;
+      throw error;
+    }
+    return updatedProduct;
+  };
 }
 export default new ProductService(productRepository);

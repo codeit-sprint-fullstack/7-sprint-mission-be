@@ -11,6 +11,11 @@ class ProductRepository {
   async getProductById(id) {
     return await Product.findById(id);
   }
+
+  // ID기반 상품 수정
+  async updateProductById(id, updateData) {
+    return await Product.findByIdAndUpdate(id, updateData, { new: true });
+  }
 }
 
 export default new ProductRepository();

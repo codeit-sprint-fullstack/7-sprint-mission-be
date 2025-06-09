@@ -6,3 +6,5 @@ export const productRouter = Router();
 productRouter.post("/", ProductController.create);
 
 productRouter.get("/:id", ProductController.getProductById);
+
+productRouter.patch("/:id", ProductController.updateProductById);
