@@ -6,6 +6,11 @@ class ProductRepository {
     const createdProduct = await Product.create(productData);
     return createdProduct;
   }
+
+  // ID기반 상품 조회
+  async getProductById(id) {
+    return await Product.findById(id);
+  }
 }
 
 export default new ProductRepository();

@@ -23,6 +23,17 @@ class ProductController {
       next(err);
     }
   };
+
+  //Get /products/:id - 단일상품조회
+  getProductById = async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const product = await this.productService.getProductById(id);
+      return res.status(200).json(product);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new ProductController(productService);

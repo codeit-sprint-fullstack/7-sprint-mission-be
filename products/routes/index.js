@@ -1,6 +1,8 @@
 import { Router } from "express";
-import productController from "../controller/index.js";
+import ProductController from "../controller/index.js";
 
 export const productRouter = Router();
 
-productRouter.post("/", productController.create);
+productRouter.post("/", ProductController.create);
+
+productRouter.get("/:id", ProductController.getProductById);

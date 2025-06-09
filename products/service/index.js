@@ -1,8 +1,10 @@
 import productRepository from "../repository/index.js";
+
 import {
   validateStringField,
   validateNumberField,
   validateStringArray,
+  validateObjectId,
 } from "../../utils/validate.js";
 
 class ProductService {
@@ -27,6 +29,19 @@ class ProductService {
     });
 
     return createdProduct;
+  };
+
+  // ID 기반 단일 상품 조회 로직
+  getProductById = async (id) => {
+    validateObjectId(id);
+
+    const product = await productRepository.getProductById(id);
+    if (!product) {
+      const error = new Error("해당 ID의 상품이 존재하지 않습니다.");
+      error.statusCode = 404;
+      throw error;
+    }
+    return product;
   };
 }
 export default new ProductService(productRepository);
