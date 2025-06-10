@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
-const cors = reqire("cors");
+const cors = require("cors");
 const PORT = 5000;
-
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+app.use(express.json());
 app.use(
   cors({
     origin: "*",
@@ -73,7 +75,7 @@ app.patch("/api/products/:id", async (req, res) => {
       }
     }
 
-    if (Object.keys(filedsData).length == 0) {
+    if (Object.keys(fieldsData).length === 0) {
       return res.status(400).json({ error: "수정할 내용이 없습니다." });
     }
     const updatedProduct = await prisma.product.update({
@@ -87,7 +89,7 @@ app.patch("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/", async (req, res) => {
+app.delete("/api/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -101,25 +103,25 @@ app.delete("/api/products/", async (req, res) => {
   }
 });
 
-app.get("/api/products/:id", async (req, res) => {
+app.get("/api/products", async (req, res) => {
   try {
     const { offset = 0, limit = 10, sort = "recent", search = "" } = req.query;
 
     const products = await prisma.product.findMany({
       where: {
         OR: [
-          { name: { cotain: search, mode: "insensitive" } },
-          { description: { cotain: search, mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
         ],
       },
-      orderBy: sort === "recent" ? { createAt: "desc" } : "",
+      orderBy: sort === "recent" ? { createdAt: "desc" } : undefined,
       skip: Number(offset),
-      task: Number(limit),
+      take: Number(limit),
       select: {
         id: true,
         name: true,
         price: true,
-        createAt: true,
+        createdAt: true,
       },
     });
 
