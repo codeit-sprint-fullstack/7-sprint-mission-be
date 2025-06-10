@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = reqire("cors");
 const PORT = 5000;
+
+app.use(
+  cors({
+    origin: "*",
+    credential: true,
+  })
+);
 
 app.post("/api/products", async (req, res) => {
   try {
@@ -31,6 +39,14 @@ app.get("/api/products/:id", async (req, res) => {
     const product = await prisma.product.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        tags: true,
+        createdAt: true,
       },
     });
     if (!product) {
@@ -71,7 +87,7 @@ app.patch("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
+app.delete("/api/products/", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -80,6 +96,34 @@ app.delete("/api/products/:id", async (req, res) => {
     });
 
     return res.status(200).json({ message: "상품이 삭제되었습니다. " });
+  } catch (error) {
+    return res.status(500).json({ error: "서버 오류 발생" });
+  }
+});
+
+app.get("/api/products/:id", async (req, res) => {
+  try {
+    const { offset = 0, limit = 10, sort = "recent", search = "" } = req.query;
+
+    const products = await prisma.product.findMany({
+      where: {
+        OR: [
+          { name: { cotain: search, mode: "insensitive" } },
+          { description: { cotain: search, mode: "insensitive" } },
+        ],
+      },
+      orderBy: sort === "recent" ? { createAt: "desc" } : "",
+      skip: Number(offset),
+      task: Number(limit),
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        createAt: true,
+      },
+    });
+
+    return res.status(200).json(products);
   } catch (error) {
     return res.status(500).json({ error: "서버 오류 발생" });
   }
