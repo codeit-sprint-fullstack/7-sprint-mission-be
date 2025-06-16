@@ -5,7 +5,7 @@ const {
   patchComment,
   deleteComment,
   getArticleComments,
-  getProductComments,
+  createComment,
 } = require("../controllers/commentController");
 
 router.post("/", createComment);

@@ -4,6 +4,8 @@ const {
   createProduct,
   deleteProduct,
   patchProduct,
+  getProductById,
+  getProduct,
 } = require("../controllers/productController");
 
 router.post("/", createProduct);

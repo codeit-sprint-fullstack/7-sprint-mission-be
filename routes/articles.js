@@ -4,6 +4,7 @@ const {
   getArticle,
   deleteArticle,
   getArticleList,
+  patchArticle,
 } = require("../controllers/articleController");
 const router = express.Router();
 
