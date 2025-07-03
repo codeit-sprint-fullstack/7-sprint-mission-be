@@ -1,14 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
-import { DATABASE_URL } from "./env.js";
+import * as dotenv from "dotenv";
 import Product from "./models/Product.js";
+import cors from "cors";
 
+const corsOptions = {
+  origin: ["http://127.0.0.1:3000"],
+};
+
+dotenv.config();
 const app = express();
+
+app.use(cors()); // corsOptions 넣어도 됨
 app.use(express.json());
 
 //MongoDB 연결
 mongoose
-  .connect(DATABASE_URL)
+  .connect(process.env.DATABASE_URL)
   .then(() => console.log("MongoDB 연결 완료"))
   .catch((err) => console.error(err));
 
@@ -111,8 +119,4 @@ app.get("/products", async (req, res) => {
 });
 
 // ✅ 서버 실행
-app.listen(3000, () => {
-  console.log("서버 실행 중 http://localhost:3000");
-});
-
-mongoose.connect(DATABASE_URL).then(() => console.log("Connected to DB"));
+app.listen(process.env.PORT || 3000, () => console.log("Server Started"));
