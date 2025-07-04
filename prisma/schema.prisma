@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String     @id @default(uuid())
+  email    String
+  password String
+  nickname String
+  img      String     @default("")
+  Product  Product[]
+  article  Article[]
+  pComment PComment[]
+  AComment AComment[]
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  name        String
+  description String
+  price       Int
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  pComment    PComment[]
+  tag         tag[]
+}
+
+model Article {
+  id        String     @id @default(uuid())
+  title     String
+  content   String?
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  AComment  AComment[]
+}
+
+model PComment {
+  id        String   @id @default(uuid())
+  content   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AComment {
+  id        String   @id @default(uuid())
+  content   String
+  article   Article  @relation(fields: [articleId], references: [id])
+  articleId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model tag {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  content   String
+}
+
+// CREATE TABLE 상품게시물이미지 (
+//     이미지ID    VARCHAR(20) NOT NULL,
+//     게시글ID    VARCHAR(20) NOT NULL,
+//     이미지      IMG,
+//     PRIMARY KEY(이미지ID),
+//     FOREIGN KEY(게시글ID) REFERENCES 상품게시물(상품게시물ID)
+// )
+
+// CREATE TABLE 자유게시물이미지 (
+//     이미지ID    VARCHAR(20) NOT NULL,
+//     게시글ID    VARCHAR(20) NOT NULL,
+//     이미지      IMG,
+//     PRIMARY KEY(이미지ID),
+//     FOREIGN KEY(게시글ID) REFERENCES 자유게시물(자유게시물ID)
+// )
+
+// CREATE TABLE 상품좋아요 (
+//     상품게시글ID    VARCHAR(20) NOT NULL,
+//     회원ID          VARCHAR(20) NOT
+//     NULL,
+//     PRIMARY KEY ( 상품게시글ID,
+//                   회원ID ),
+//     FOREIGN KEY ( 상품게시글ID )
+//         REFERENCES 상품게시물 ( 상품게시물ID ),
+//     FOREIGN KEY ( 회원ID )
+//         REFERENCES 유저 ( 회원ID )
+// )
