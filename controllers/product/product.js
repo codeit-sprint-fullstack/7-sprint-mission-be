@@ -21,7 +21,7 @@ export const getAllProducts = async (req, res) => {
 };
 
 export const getProductById = async (req, res) => {
-  const id = req.query.id;
+  const id = req.params.id;
   try {
     const products = await fetchProductById(id);
     if (!products) {
@@ -63,7 +63,7 @@ export const patchProduct = async (req, res) => {
 };
 
 export const deleteProduct = async (req, res) => {
-  const id = req.query.id;
+  const id = req.params.id;
   try {
     const products = await deleteProductService(id);
     if (!products) {
