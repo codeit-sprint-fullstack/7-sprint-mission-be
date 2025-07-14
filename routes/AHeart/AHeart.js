@@ -1,8 +1,9 @@
 import express from "express";
-import { patchAHeart } from "../../controllers/AHeart/AHeart.js";
+import { postAHeart, patchAHeart } from "../../controllers/AHeart/AHeart.js";
 
 const router = express.Router();
 
+router.post("/", postAHeart);
 router.patch("/:id", patchAHeart);
 
 export default router;
