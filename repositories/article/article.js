@@ -22,6 +22,13 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
   return await prisma.article.findMany({
     where: whereCondition,
     orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      updatedAt: true,
+      user: { select: { id: true, nickname: true, img: true } },
+      _count: { select: { AHeart: true } },
+    },
     skip: parseInt(offset),
     take: parseInt(limit),
   });
