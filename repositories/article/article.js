@@ -5,7 +5,12 @@ const prisma = new PrismaClient();
 // 자유게시글 목록 조회 get
 // offset 페이지네이션, 최신순 정렬
 // title, content에 포함된 단어로 검색
-export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
+export const getAllArticles = async ({
+  userId,
+  keyword,
+  offset = 0,
+  limit = 10,
+}) => {
   const whereCondition = keyword
     ? {
         OR: [
@@ -28,6 +33,7 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
       updatedAt: true,
       user: { select: { id: true, nickname: true, img: true } },
       _count: { select: { AHeart: true } },
+      AHeart: { where: { userId: userId || "noUser" }, select: { id: true } },
     },
     skip: parseInt(offset),
     take: parseInt(limit),
@@ -35,7 +41,7 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
 };
 
 // 자유게시글 단일 조회 get
-export const getArticleById = async (id) => {
+export const getArticleById = async (id, userId) => {
   return await prisma.article.findUnique({
     where: { id },
     select: {
@@ -53,6 +59,7 @@ export const getArticleById = async (id) => {
         },
       },
       _count: { select: { AHeart: true, AComment: true } },
+      AHeart: { where: { userId: userId || "noUser" }, select: { id: true } },
     },
   });
 };

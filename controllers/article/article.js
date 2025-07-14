@@ -22,8 +22,9 @@ export const getAllArticles = async (req, res) => {
 
 export const getArticleById = async (req, res) => {
   const id = req.params.id;
+  const userId = req.query.userId;
   try {
-    const articles = await fetchArticleById(id);
+    const articles = await fetchArticleById(id, userId);
     if (!articles) {
       return res.status(404).json({ error: "Articles not found" });
     }
