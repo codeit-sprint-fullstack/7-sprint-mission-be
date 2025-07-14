@@ -21,7 +21,6 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
 
   return await prisma.article.findMany({
     where: whereCondition,
-    select: { id: true, title: true, content: true, createdAt: true },
     orderBy: { updatedAt: "desc" },
     skip: parseInt(offset),
     take: parseInt(limit),
@@ -32,13 +31,6 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
 export const getArticleById = async (id) => {
   return await prisma.article.findUnique({
     where: { id },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      tag: true,
-      createdAt: true,
-    },
   });
 };
 
