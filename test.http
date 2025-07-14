@@ -1,0 +1,22 @@
+### 로그인
+POST http://localhost:4000/auth/signIn
+Content-Type: application/json
+
+{
+  "email": "jwj@gg.com",
+  "password": "123"
+}
+
+### 내 정보 가져오기
+GET http://localhost:4000/auth/me
+
+### 리프레시 토큰으로 accessToken 재발급
+POST http://localhost:4000/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJyZWZyZXNoIiwiaWF0IjoxNzUyNDAwNTU1LCJleHAiOjE3NTMwMDUzNTUsImlzcyI6InNwLXBhbmRhLW1hcmtldCJ9.iCVObTutPtuRWNv5WvuzxcXvT_VaNDdClElW3eyeY_w"
+}
+
+### 로그아웃 요청
+POST http://localhost:4000/auth/logout
