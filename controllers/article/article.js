@@ -21,7 +21,7 @@ export const getAllArticles = async (req, res) => {
 };
 
 export const getArticleById = async (req, res) => {
-  const id = req.query.id;
+  const id = req.params.id;
   try {
     const articles = await fetchArticleById(id);
     if (!articles) {

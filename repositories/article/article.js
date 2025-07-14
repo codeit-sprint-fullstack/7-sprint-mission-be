@@ -38,6 +38,22 @@ export const getAllArticles = async ({ keyword, offset = 0, limit = 10 }) => {
 export const getArticleById = async (id) => {
   return await prisma.article.findUnique({
     where: { id },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      updatedAt: true,
+      user: { select: { id: true, nickname: true, img: true } },
+      AComment: {
+        select: {
+          id: true,
+          content: true,
+          updatedAt: true,
+          user: { select: { id: true, nickname: true, img: true } },
+        },
+      },
+      _count: { select: { AHeart: true, AComment: true } },
+    },
   });
 };
 
