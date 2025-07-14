@@ -25,15 +25,18 @@ export const getAllArticles = async ({
     : undefined;
 
   return await prisma.article.findMany({
-    where: whereCondition,
+    where: { ...whereCondition, deleted: false },
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
       title: true,
       updatedAt: true,
       user: { select: { id: true, nickname: true, img: true } },
-      _count: { select: { AHeart: true } },
-      AHeart: { where: { userId: userId || "noUser" }, select: { id: true } },
+      _count: { select: { AHeart: { where: { canceled: false } } } },
+      AHeart: {
+        where: { userId: userId || "noUser", canceled: false },
+        select: { id: true },
+      },
     },
     skip: parseInt(offset),
     take: parseInt(limit),
@@ -43,7 +46,7 @@ export const getAllArticles = async ({
 // 자유게시글 단일 조회 get
 export const getArticleById = async (id, userId) => {
   return await prisma.article.findUnique({
-    where: { id },
+    where: { id, deleted: false },
     select: {
       id: true,
       title: true,
@@ -51,6 +54,7 @@ export const getArticleById = async (id, userId) => {
       updatedAt: true,
       user: { select: { id: true, nickname: true, img: true } },
       AComment: {
+        where: { deleted: false },
         select: {
           id: true,
           content: true,
@@ -58,8 +62,16 @@ export const getArticleById = async (id, userId) => {
           user: { select: { id: true, nickname: true, img: true } },
         },
       },
-      _count: { select: { AHeart: true, AComment: true } },
-      AHeart: { where: { userId: userId || "noUser" }, select: { id: true } },
+      _count: {
+        select: {
+          AHeart: { where: { canceled: false } },
+          AComment: { where: { deleted: false } },
+        },
+      },
+      AHeart: {
+        where: { userId: userId || "noUser", canceled: false },
+        select: { id: true },
+      },
     },
   });
 };
