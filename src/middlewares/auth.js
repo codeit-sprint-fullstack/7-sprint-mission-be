@@ -1,7 +1,11 @@
 // src/middlewares/auth.js
 import { verifyAccessToken } from "../utils/jwt.js";
 
+
 export function requireAuth(req, res, next) {
+  // console.log(typeof req.cookies.accessToken);
+  // console.log(" accessToken 쿠키 값:", req.cookies?.accessToken);
+  // console.log(" 전체 쿠키 객체:", req.cookies);
   const accessToken = req.cookies?.accessToken;
 
   // 1. 토큰이 아예 없는 경우

@@ -20,3 +20,18 @@ Content-Type: application/json
 
 ### 로그아웃 요청
 POST http://localhost:4000/auth/logout
+
+### 댓글 조회
+GET http://localhost:4000/articles/2/comments
+
+
+
+### 댓글 작성 
+POST http://localhost:4000/articles/2/comments
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2MjkxNTEsImV4cCI6MTc1MjYzMDk1MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.3jMN4JxGtzXbNHO0GV8o7c7Kep9abz9rT65SHlQjdN4
+
+{
+  "content": "댓글 테스트입니다33."
+}
+

@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import articleRoutes from "./routes/article.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import commentArticleRoutes from "./routes/commentArticle.routes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -12,7 +13,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000", // 프론트 도메인 정확히 명시
-    credentials: true,               // 쿠키 주고받기 허용
+    credentials: true, // 쿠키 주고받기 허용
   })
 );
 app.use(express.json()); // JSON 파싱
@@ -20,8 +21,10 @@ app.use(cookieParser()); //res.cookie() 쓰기위함
 app.use(morgan("dev")); // 요청 로깅
 
 // ✅ 라우트 연결
-app.use("/articles", articleRoutes);
+app.use("/articles", articleRoutes); // /articles, /articles/:id
+app.use("/articles",commentArticleRoutes);  // /articles/:id/comments
 app.use("/auth", authRoutes);
+
 
 // 🛠 에러 핸들링 미들웨어 (선택)
 app.use((err, req, res, next) => {
