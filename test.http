@@ -22,7 +22,7 @@ Content-Type: application/json
 POST http://localhost:4000/auth/logout
 
 ### 댓글 조회
-GET http://localhost:4000/articles/2/comments
+GET http://localhost:4000/articles/7/comments
 
 
 
@@ -35,3 +35,20 @@ Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJ
   "content": "댓글 테스트입니다33."
 }
 
+### 댓글 수정
+PATCH http://localhost:4000/articles/7/comments/25
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2NDkzODEsImV4cCI6MTc1MjY1MTE4MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.n9nHb7lt7j-c_UO92qm60DbrBqNGdnjMGajlitNdjzE
+
+{
+  "content": "다른계정 댓글수정시도"
+}
+
+# 본인 댓글이고 수정 성공 -	200 OK + { comment: ... }
+# 댓글이 없음 or 본인 것이 아님 -	404 Not Found + { message }
+# content가 빈 값 -	400 Bad Request + { message }
+# 토큰 없음/만료됨 -	401 Unauthorized
+
+### 댓글 삭제
+DELETE http://localhost:4000/articles/7/comments/24
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2NDkzODEsImV4cCI6MTc1MjY1MTE4MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.n9nHb7lt7j-c_UO92qm60DbrBqNGdnjMGajlitNdjzE
