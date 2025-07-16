@@ -11,12 +11,18 @@ export const getAllArticles = async ({
   keyword,
   offset = 0,
   limit = 10,
+  orderBy,
 }) => {
   const search = keyword ? `%${keyword}%` : null;
 
   const whereClause = search
     ? Prisma.sql`AND (a.title ILIKE ${search} OR a.content ILIKE ${search})`
     : Prisma.empty;
+
+  const orderClause =
+    orderBy === "hearts"
+      ? Prisma.sql`ORDER BY heart_count DESC`
+      : Prisma.sql`ORDER BY a."updatedAt" DESC`;
 
   const rawResult = await prisma.$queryRaw`
     SELECT 
@@ -31,7 +37,15 @@ export const getAllArticles = async ({
       EXISTS (
         SELECT 1 FROM "AHeart" h2 
         WHERE h2."articleId" = a.id AND h2."userId" = ${userId} AND h2.canceled = false
-      ) AS "isHearted"
+      ) AS "isHearted",
+      (
+        SELECT h3.id
+        FROM "AHeart" h3
+        WHERE h3."articleId" = a.id
+          AND h3."userId" = ${userId}
+          AND h3.canceled = false
+        LIMIT 1
+      ) AS "heartId"
     FROM "Article" a
     JOIN "User" u ON a."userId" = u.id
     LEFT JOIN "AHeart" h ON h."articleId" = a.id
@@ -39,7 +53,7 @@ export const getAllArticles = async ({
     WHERE a.deleted = false
       ${whereClause}
     GROUP BY a.id, u.id
-    ORDER BY heart_count DESC
+    ${orderClause}
     LIMIT ${Number(limit)} OFFSET ${Number(offset)};
   `;
 
