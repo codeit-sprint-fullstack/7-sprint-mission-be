@@ -36,7 +36,7 @@ export const getArticleById = async (req, res) => {
 };
 
 export const postArticle = async (req, res) => {
-  const data = req.body;
+  const { data } = req.body;
   try {
     const articles = await createArticle(data);
     if (!articles) {

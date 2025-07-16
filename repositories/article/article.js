@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { skip } from "@prisma/client/runtime/library";
 const prisma = new PrismaClient();
 
@@ -11,36 +12,44 @@ export const getAllArticles = async ({
   offset = 0,
   limit = 10,
 }) => {
-  const whereCondition = keyword
-    ? {
-        OR: [
-          {
-            title: { contains: keyword, mode: "insensitive" },
-          },
-          {
-            content: { contains: keyword, mode: "insensitive" },
-          },
-        ],
-      }
-    : undefined;
+  const search = keyword ? `%${keyword}%` : null;
 
-  return await prisma.article.findMany({
-    where: { ...whereCondition, deleted: false },
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      updatedAt: true,
-      user: { select: { id: true, nickname: true, img: true } },
-      _count: { select: { AHeart: { where: { canceled: false } } } },
-      AHeart: {
-        where: { userId: userId || "noUser", canceled: false },
-        select: { id: true },
-      },
-    },
-    skip: parseInt(offset),
-    take: parseInt(limit),
-  });
+  const whereClause = search
+    ? Prisma.sql`AND (a.title ILIKE ${search} OR a.content ILIKE ${search})`
+    : Prisma.empty;
+
+  const rawResult = await prisma.$queryRaw`
+    SELECT 
+      a.id, 
+      a.title, 
+      a."updatedAt",
+      u.id AS "userId", 
+      u.nickname, 
+      u.img,
+      COUNT(DISTINCT CASE WHEN h.canceled = false THEN h.id END) AS heart_count,
+      COUNT(DISTINCT CASE WHEN c.deleted = false THEN c.id END) AS comment_count,
+      EXISTS (
+        SELECT 1 FROM "AHeart" h2 
+        WHERE h2."articleId" = a.id AND h2."userId" = ${userId} AND h2.canceled = false
+      ) AS "isHearted"
+    FROM "Article" a
+    JOIN "User" u ON a."userId" = u.id
+    LEFT JOIN "AHeart" h ON h."articleId" = a.id
+    LEFT JOIN "AComment" c ON c."articleId" = a.id
+    WHERE a.deleted = false
+      ${whereClause}
+    GROUP BY a.id, u.id
+    ORDER BY heart_count DESC
+    LIMIT ${Number(limit)} OFFSET ${Number(offset)};
+  `;
+
+  const result = rawResult.map((row) => ({
+    ...row,
+    heart_count: Number(row.heart_count),
+    comment_count: Number(row.comment_count),
+  }));
+
+  return result;
 };
 
 // 자유게시글 단일 조회 get
