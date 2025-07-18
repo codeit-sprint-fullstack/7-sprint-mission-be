@@ -6,8 +6,13 @@ const prisma = new PrismaClient();
 // 커서 기반 페이지네이션
 export const getAllAComments = async (articleId, cursor, limit = 10) => {
   return await prisma.aComment.findMany({
-    where: { articleId },
-    select: { id: true, content: true, createdAt: true },
+    where: { articleId, deleted: false },
+    select: {
+      id: true,
+      content: true,
+      user: { select: { nickname: true, id: true, img: true } },
+      updatedAt: true,
+    },
     cursor,
     take: parseInt(limit),
   });

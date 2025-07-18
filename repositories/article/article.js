@@ -33,7 +33,6 @@ export const getAllArticles = async ({
       u.nickname, 
       u.img,
       COUNT(DISTINCT CASE WHEN h.canceled = false THEN h.id END) AS heart_count,
-      COUNT(DISTINCT CASE WHEN c.deleted = false THEN c.id END) AS comment_count,
       EXISTS (
         SELECT 1 FROM "AHeart" h2 
         WHERE h2."articleId" = a.id AND h2."userId" = ${userId} AND h2.canceled = false
@@ -49,7 +48,6 @@ export const getAllArticles = async ({
     FROM "Article" a
     JOIN "User" u ON a."userId" = u.id
     LEFT JOIN "AHeart" h ON h."articleId" = a.id
-    LEFT JOIN "AComment" c ON c."articleId" = a.id
     WHERE a.deleted = false
       ${whereClause}
     GROUP BY a.id, u.id
@@ -76,15 +74,6 @@ export const getArticleById = async (id, userId) => {
       content: true,
       updatedAt: true,
       user: { select: { id: true, nickname: true, img: true } },
-      AComment: {
-        where: { deleted: false },
-        select: {
-          id: true,
-          content: true,
-          updatedAt: true,
-          user: { select: { id: true, nickname: true, img: true } },
-        },
-      },
       _count: {
         select: {
           AHeart: { where: { canceled: false } },

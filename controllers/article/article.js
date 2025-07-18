@@ -50,7 +50,8 @@ export const postArticle = async (req, res) => {
 };
 
 export const patchArticle = async (req, res) => {
-  const { id, data } = req.body;
+  const { data } = req.body;
+  const id = req.params.id;
   try {
     const articles = await updateArticle(id, data);
     if (!articles) {
