@@ -10,8 +10,8 @@ export const fetchAllArticles = async (query) => {
   return await getAllArticles(query);
 };
 
-export const fetchArticleById = async (id) => {
-  return await getArticleById(id);
+export const fetchArticleById = async (id, userId) => {
+  return await getArticleById(id, userId);
 };
 
 export const createArticle = async (data) => {

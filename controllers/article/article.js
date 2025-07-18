@@ -21,9 +21,10 @@ export const getAllArticles = async (req, res) => {
 };
 
 export const getArticleById = async (req, res) => {
-  const id = req.query.id;
+  const id = req.params.id;
+  const userId = req.query.userId;
   try {
-    const articles = await fetchArticleById(id);
+    const articles = await fetchArticleById(id, userId);
     if (!articles) {
       return res.status(404).json({ error: "Articles not found" });
     }
@@ -35,7 +36,7 @@ export const getArticleById = async (req, res) => {
 };
 
 export const postArticle = async (req, res) => {
-  const data = req.body;
+  const { data } = req.body;
   try {
     const articles = await createArticle(data);
     if (!articles) {
@@ -49,7 +50,8 @@ export const postArticle = async (req, res) => {
 };
 
 export const patchArticle = async (req, res) => {
-  const { id, data } = req.body;
+  const { data } = req.body;
+  const id = req.params.id;
   try {
     const articles = await updateArticle(id, data);
     if (!articles) {

@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", getAllArticles);
 router.get("/:id", getArticleById);
 router.post("/", postArticle);
-router.patch("/", patchArticle);
+router.patch("/:id", patchArticle);
 router.delete("/:id", deleteArticle);
 
 export default router;
