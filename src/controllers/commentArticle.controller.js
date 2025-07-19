@@ -4,6 +4,7 @@ import {
   fetchCommentsByArticleId,
   updateComment,
   deleteComment as deleteCommentService,
+  toggleArticleCommentLike, 
 } from "../services/commentArticle.service.js";
 
 export async function getComments(req, res, next) {
@@ -16,6 +17,7 @@ export async function getComments(req, res, next) {
   }
 }
 
+//
 export async function postComment(req, res, next) {
   const { articleId } = req.params;
   const { content } = req.body;
@@ -41,6 +43,7 @@ export async function postComment(req, res, next) {
   }
 }
 
+//
 export async function patchComment(req, res, next) {
   const { commentId } = req.params;
   const { content } = req.body;
@@ -53,18 +56,15 @@ export async function patchComment(req, res, next) {
   if (!content || !content.trim()) {
     return res.status(400).json({ message: "수정할 내용이 없습니다." });
   }
-
   try {
     const updatedComment = await updateComment({
       commentId: Number(commentId),
       userId,
       content,
     });
-
     if (!updatedComment) {
       return res.status(404).json({ message: "댓글을 수정할 수 없습니다." });
     }
-
     res.status(200).json({ comment: updatedComment });
   } catch (err) {
     console.error("❌ 댓글 수정 실패:", err.message);
@@ -72,6 +72,7 @@ export async function patchComment(req, res, next) {
   }
 }
 
+//
 export async function deleteComment(req, res, next) {
   const { commentId } = req.params;
   const userId = req.user?.id;
@@ -93,6 +94,31 @@ export async function deleteComment(req, res, next) {
     res.status(204).send(); // ✅ No Content
   } catch (err) {
     console.error("❌ 댓글 삭제 실패:", err.message);
+    next(err);
+  }
+}
+
+export async function toggleLikeComment(req, res, next) {
+  const { commentId } = req.params;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "로그인이 필요합니다." });
+  }
+
+  try {
+    const { liked, likeCount } = await toggleArticleCommentLike({
+      commentId: Number(commentId),
+      userId,
+    });
+
+    res.status(200).json({
+      liked,
+      likeCount,
+      message: liked ? "추천 완료" : "추천 취소",
+    });
+  } catch (err) {
+    console.error("❌ 댓글 추천 실패:", err.message);
     next(err);
   }
 }

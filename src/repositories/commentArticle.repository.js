@@ -80,3 +80,44 @@ export async function softDeleteComment({ commentId, userId }) {
 
   return deleted.count > 0;
 }
+
+// 댓글 좋아요 존재 여부 확인 (중복 추천 방지용)
+export async function findCommentLike({ commentId, userId }) {
+  return prisma.articleCommentLike.findUnique({
+    where: {
+      commentId_userId: {
+        commentId,
+        userId,
+      },
+    },
+  });
+}
+
+// 댓글 좋아요 추가
+export async function createCommentLike({ commentId, userId }) {
+  return prisma.articleCommentLike.create({
+    data: {
+      commentId,
+      userId,
+    },
+  });
+}
+
+// 댓글 좋아요 삭제 (추천 취소)
+export async function deleteCommentLike({ commentId, userId }) {
+  return prisma.articleCommentLike.delete({
+    where: {
+      commentId_userId: {
+        commentId,
+        userId,
+      },
+    },
+  });
+}
+
+// 댓글 좋아요 수 세기
+export async function countCommentLikes(commentId) {
+  return prisma.articleCommentLike.count({
+    where: { commentId },
+  });
+}

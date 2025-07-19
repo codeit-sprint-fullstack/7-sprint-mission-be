@@ -52,3 +52,9 @@ Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJ
 ### 댓글 삭제
 DELETE http://localhost:4000/articles/7/comments/24
 Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2NDkzODEsImV4cCI6MTc1MjY1MTE4MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.n9nHb7lt7j-c_UO92qm60DbrBqNGdnjMGajlitNdjzE
+
+
+### ✅ 댓글 좋아요 토글
+POST http://localhost:4000/articles/12/comments/23/like
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI5MTY1MjMsImV4cCI6MTc1MjkxODMyMywiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QagFeXG0iD9FG-QZ8UKgfr9rw8Eyk2pEPlZ4D0fe4dI
