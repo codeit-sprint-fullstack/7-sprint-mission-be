@@ -8,14 +8,18 @@ import {
   toggleLikeComment,
 } from "../controllers/commentArticle.controller.js";
 
-import { requireAuth } from "../middlewares/auth.js";
+import { requireAuth, setUserIfExists } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/:articleId/comments", getComments);
+router.get("/:articleId/comments", setUserIfExists, getComments);
 router.post("/:articleId/comments", requireAuth, postComment);
 router.patch("/:articleId/comments/:commentId", requireAuth, patchComment);
 router.delete("/:articleId/comments/:commentId", requireAuth, deleteComment);
-router.post("/:articleId/comments/:commentId/like", requireAuth, toggleLikeComment);
+router.post(
+  "/:articleId/comments/:commentId/like",
+  requireAuth,
+  toggleLikeComment
+);
 
 export default router;

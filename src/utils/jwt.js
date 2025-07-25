@@ -6,6 +6,7 @@ const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const ISSUER = "sp-panda-market";
 
 // access: 30분, refresh: 7일 토큰생성
+//jwt.sign - 토큰 생성
 export function createAccessToken(payload) {
   return jwt.sign(payload, ACCESS_SECRET, {
     algorithm: "HS256",
@@ -22,7 +23,7 @@ export function createRefreshToken(payload) {
   });
 }
 
-// 액세스 토큰 검증
+// jwt.verify 액세스 토큰 유효성 검증
 export function verifyAccessToken(token) {
   try {
     return jwt.verify(token, ACCESS_SECRET);

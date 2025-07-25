@@ -22,14 +22,14 @@ Content-Type: application/json
 POST http://localhost:4000/auth/logout
 
 ### 댓글 조회
-GET http://localhost:4000/articles/7/comments
-
+GET http://localhost:4000/articles/12/comments
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTgwNzAsImV4cCI6MTc1MzQxOTg3MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QvN618wjr7BW4DTSXUsblaYnXETRMdJGW1937e0zEv8
 
 
 ### 댓글 작성 
 POST http://localhost:4000/articles/2/comments
 Content-Type: application/json
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2MjkxNTEsImV4cCI6MTc1MjYzMDk1MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.3jMN4JxGtzXbNHO0GV8o7c7Kep9abz9rT65SHlQjdN4
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTgwNzAsImV4cCI6MTc1MzQxOTg3MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QvN618wjr7BW4DTSXUsblaYnXETRMdJGW1937e0zEv8
 
 {
   "content": "댓글 테스트입니다33."
@@ -57,4 +57,4 @@ Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJ
 ### ✅ 댓글 좋아요 토글
 POST http://localhost:4000/articles/12/comments/23/like
 Content-Type: application/json
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI5MTY1MjMsImV4cCI6MTc1MjkxODMyMywiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QagFeXG0iD9FG-QZ8UKgfr9rw8Eyk2pEPlZ4D0fe4dI
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTA5ODAsImV4cCI6MTc1MzQxMjc4MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.nOlbNxwOd5QWNF2MsILW1Zn1rOJ3XJXYNJPx8bV9q7A

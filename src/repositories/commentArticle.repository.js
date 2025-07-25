@@ -1,8 +1,8 @@
 //src/repositories/commentArticle.repository.js
 import prisma from "../utils/prismaClient.js";
 
-export async function findCommentsByArticleId(articleId) {
-  return prisma.articleComment.findMany({
+export async function findCommentsByArticleId(articleId, userId = null) {
+  const comments = await prisma.articleComment.findMany({
     where: { articleId, deletedAt: null },
     include: {
       user: {
@@ -12,8 +12,17 @@ export async function findCommentsByArticleId(articleId) {
           image: true,
         },
       },
+      likes: { select: { userId: true } },
     },
     orderBy: { createdAt: "asc" },
+  });
+
+  return comments.map((comment) => {
+    const likeCount = comment.likes.length;
+    const liked = userId
+      ? comment.likes.some((like) => like.userId === userId)
+      : false; //likes배열에 내 아이디 있으면 true
+    return { ...comment, likeCount, liked };
   });
 }
 

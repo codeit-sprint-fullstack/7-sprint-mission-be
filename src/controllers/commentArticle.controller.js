@@ -9,8 +9,9 @@ import {
 
 export async function getComments(req, res, next) {
   const { articleId } = req.params;
+  const userId = req.user?.id; // 비로그인이면 undefined
   try {
-    const comments = await fetchCommentsByArticleId(Number(articleId));
+    const comments = await fetchCommentsByArticleId(Number(articleId),userId);
     res.json({ comments });
   } catch (err) {
     next(err);

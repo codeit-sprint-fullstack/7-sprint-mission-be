@@ -16,6 +16,7 @@ app.use(
     credentials: true, // 쿠키 주고받기 허용
   })
 );
+//경로 안적으면 전체에 적용
 app.use(express.json()); // JSON 파싱
 app.use(cookieParser()); //res.cookie() 쓰기위함
 app.use(morgan("dev")); // 요청 로깅

@@ -10,8 +10,8 @@ import {
   countCommentLikes,
 } from "../repositories/commentArticle.repository.js";
 
-export async function fetchCommentsByArticleId(articleId) {
-  return await findCommentsByArticleId(articleId);
+export async function fetchCommentsByArticleId(articleId,userId) {
+  return await findCommentsByArticleId(articleId,userId);
 }
 
 export async function createComment({ articleId, userId, content }) {
