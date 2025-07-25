@@ -21,51 +21,64 @@ export async function findArticles({
       user: {
         select: { id: true, nickname: true, image: true },
       },
-      _count: {
-        select: { comments: true }, //@TODO deletedAt : null 고려해야할듯?
-      },
     },
     orderBy: orderCondition,
     skip,
     take,
   });
 
-  const totalCount = await prisma.article.count({
+  const commentCounts = await prisma.articleComment.groupBy({
+    by: ["articleId"],
     where: { deletedAt: null },
+    _count: { articleId: true },
   });
+
+  // [[k,v],[k2,v],[k3,v]]=>{k:v,k2:v,k3,v} //배열 ->객체
+  const commentMap = Object.fromEntries(
+    commentCounts.map((item) => [item.articleId, item._count.articleId])
+  );
 
   const articlesWithCommentCount = articles.map((article) => ({
     ...article,
-    commentCount: article._count.comments,
+    commentCount: commentMap[article.id] || 0,
   }));
+
+  const totalCount = await prisma.article.count({
+    where: { deletedAt: null },
+  });
 
   return { list: articlesWithCommentCount, totalCount };
 }
 
 //게시글 상세조회
 export async function findArticleById(articleId) {
-  const article = await prisma.article.findFirst({
-    where: {
-      id: Number(articleId),
-      deletedAt: null,
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          nickname: true,
-          image: true,
+  const [article, commentCount] = await Promise.all([
+    prisma.article.findFirst({
+      where: {
+        id: Number(articleId),
+        deletedAt: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            nickname: true,
+            image: true,
+          },
         },
       },
-      _count: {
-        select: { comments: true },
+    }),
+    prisma.articleComment.count({
+      where: {
+        articleId: Number(articleId),
+        deletedAt: null,
       },
-    },
-  });
+    }),
+  ]);
 
   if (!article) return null;
 
-  return { ...article, commentCount: article._count.comments };
+  return { ...article, commentCount };
 }
 
 //글작성
