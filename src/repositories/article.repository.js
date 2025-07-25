@@ -2,6 +2,7 @@
 
 import prisma from "../utils/prismaClient.js";
 
+//@TODO db에서 꺼내오는 거 이외의 과정은 service layer로 옮기기
 //게시글 전체조회
 export async function findArticles({
   page = 1,
@@ -20,6 +21,9 @@ export async function findArticles({
       user: {
         select: { id: true, nickname: true, image: true },
       },
+      _count: {
+        select: { comments: true }, //@TODO deletedAt : null 고려해야할듯?
+      },
     },
     orderBy: orderCondition,
     skip,
@@ -30,13 +34,17 @@ export async function findArticles({
     where: { deletedAt: null },
   });
 
-  return { list: articles, totalCount };
+  const articlesWithCommentCount = articles.map((article) => ({
+    ...article,
+    commentCount: article._count.comments,
+  }));
+
+  return { list: articlesWithCommentCount, totalCount };
 }
 
 //게시글 상세조회
-
 export async function findArticleById(articleId) {
-  return await prisma.article.findFirst({
+  const article = await prisma.article.findFirst({
     where: {
       id: Number(articleId),
       deletedAt: null,
@@ -49,8 +57,15 @@ export async function findArticleById(articleId) {
           image: true,
         },
       },
+      _count: {
+        select: { comments: true },
+      },
     },
   });
+
+  if (!article) return null;
+
+  return { ...article, commentCount: article._count.comments };
 }
 
 //글작성
