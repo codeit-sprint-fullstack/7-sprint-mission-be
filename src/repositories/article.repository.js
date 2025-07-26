@@ -2,83 +2,61 @@
 
 import prisma from "../utils/prismaClient.js";
 
-//@TODO db에서 꺼내오는 거 이외의 과정은 service layer로 옮기기
-//게시글 전체조회
-export async function findArticles({
-  page = 1,
-  pageSize = 5,
-  orderBy = "recent",
-}) {
-  const skip = (page - 1) * pageSize;
-  const take = Number(pageSize);
-
-  const orderCondition =
-    orderBy === "like" ? { likeCount: "desc" } : { updatedAt: "desc" };
-
-  const articles = await prisma.article.findMany({
+export async function fetchArticles({ skip, take, orderBy }) {
+  return prisma.article.findMany({
     where: { deletedAt: null },
     include: {
       user: {
         select: { id: true, nickname: true, image: true },
       },
     },
-    orderBy: orderCondition,
+    orderBy,
     skip,
     take,
   });
+}
 
-  const commentCounts = await prisma.articleComment.groupBy({
+//페이지네이션 용 게시글 개수 카운팅
+export async function countAllArticles() {
+  return prisma.article.count({
+    where: { deletedAt: null },
+  });
+}
+
+//댓글 개수 (deletedAt 제외) groupBy
+export async function groupCommentCounts() {
+  return prisma.articleComment.groupBy({
     by: ["articleId"],
     where: { deletedAt: null },
     _count: { articleId: true },
   });
-
-  // [[k,v],[k2,v],[k3,v]]=>{k:v,k2:v,k3,v} //배열 ->객체
-  const commentMap = Object.fromEntries(
-    commentCounts.map((item) => [item.articleId, item._count.articleId])
-  );
-
-  const articlesWithCommentCount = articles.map((article) => ({
-    ...article,
-    commentCount: commentMap[article.id] || 0,
-  }));
-
-  const totalCount = await prisma.article.count({
-    where: { deletedAt: null },
-  });
-
-  return { list: articlesWithCommentCount, totalCount };
 }
 
-//게시글 상세조회
-export async function findArticleById(articleId) {
-  const [article, commentCount] = await Promise.all([
-    prisma.article.findFirst({
-      where: {
-        id: Number(articleId),
-        deletedAt: null,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-            image: true,
-          },
+
+//게시글 상세+작성자
+export async function fetchArticleById(articleId) {
+  return prisma.article.findFirst({
+    where: { id: Number(articleId), deletedAt: null },
+    include: {
+      user: {
+        select: {
+          id: true,
+          nickname: true,
+          image: true,
         },
       },
-    }),
-    prisma.articleComment.count({
-      where: {
-        articleId: Number(articleId),
-        deletedAt: null,
-      },
-    }),
-  ]);
+    },
+  });
+}
 
-  if (!article) return null;
-
-  return { ...article, commentCount };
+// 단일게시글 댓글 갯수
+export async function countCommentsOfArticle(articleId) {
+  return prisma.articleComment.count({
+    where: {
+      articleId: Number(articleId),
+      deletedAt: null,
+    },
+  });
 }
 
 //글작성
