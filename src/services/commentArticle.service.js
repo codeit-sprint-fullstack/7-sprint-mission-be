@@ -10,6 +10,7 @@ import {
   deleteLike,
   countLikes,
 } from "../repositories/commentArticle.repository.js";
+import { toggleArticleCommentLikeWithTx } from "../utils/toggleArticleCommentLike.js";
 
 //댓글목록 + 유저별 liked 여부 계산
 export async function fetchCommentsByArticleId(articleId, userId) {
@@ -45,46 +46,7 @@ export async function deleteComment({ commentId, userId }) {
 }
 
 // 좋아요 토글
+
 export async function toggleArticleCommentLike({ commentId, userId }) {
-  const existing = await findLike({ commentId, userId });
-
-  if (existing) {
-    await deleteLike({ commentId, userId });
-    const likeCount = await countLikes(commentId);
-    return { liked: false, likeCount };
-  } else {
-    await createLike({ commentId, userId });
-    const likeCount = await countLikes(commentId);
-    return { liked: true, likeCount };
-  }
+  return await toggleArticleCommentLikeWithTx({ commentId, userId });
 }
-
-// export async function fetchCommentsByArticleId(articleId,userId) {
-//   return await findCommentsByArticleId(articleId,userId);
-// }
-
-// export async function createComment({ articleId, userId, content }) {
-//   return await insertComment({ articleId, userId, content });
-// }
-
-// export async function updateComment({ commentId, userId, content }) {
-//   return await modifyComment({ commentId, userId, content });
-// }
-
-// export async function deleteComment({ commentId, userId }) {
-//   return await softDeleteComment({ commentId, userId });
-// }
-
-// export async function toggleArticleCommentLike({ commentId, userId }) {
-//   const existingLike = await findCommentLike({ commentId, userId });
-
-//   if (existingLike) {
-//     await deleteCommentLike({ commentId, userId });
-//     const likeCount = await countCommentLikes(commentId);
-//     return { liked: false, likeCount };
-//   } else {
-//     await createCommentLike({ commentId, userId });
-//     const likeCount = await countCommentLikes(commentId);
-//     return { liked: true, likeCount };
-//   }
-// }
