@@ -1,0 +1,60 @@
+### 로그인
+POST http://localhost:4000/auth/signIn
+Content-Type: application/json
+
+{
+  "email": "jwj@gg.com",
+  "password": "123"
+}
+
+### 내 정보 가져오기
+GET http://localhost:4000/auth/me
+
+### 리프레시 토큰으로 accessToken 재발급
+POST http://localhost:4000/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJyZWZyZXNoIiwiaWF0IjoxNzUyNDAwNTU1LCJleHAiOjE3NTMwMDUzNTUsImlzcyI6InNwLXBhbmRhLW1hcmtldCJ9.iCVObTutPtuRWNv5WvuzxcXvT_VaNDdClElW3eyeY_w"
+}
+
+### 로그아웃 요청
+POST http://localhost:4000/auth/logout
+
+### 댓글 조회
+GET http://localhost:4000/articles/12/comments
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTgwNzAsImV4cCI6MTc1MzQxOTg3MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QvN618wjr7BW4DTSXUsblaYnXETRMdJGW1937e0zEv8
+
+
+### 댓글 작성 
+POST http://localhost:4000/articles/2/comments
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTgwNzAsImV4cCI6MTc1MzQxOTg3MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.QvN618wjr7BW4DTSXUsblaYnXETRMdJGW1937e0zEv8
+
+{
+  "content": "댓글 테스트입니다33."
+}
+
+### 댓글 수정
+PATCH http://localhost:4000/articles/7/comments/25
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2NDkzODEsImV4cCI6MTc1MjY1MTE4MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.n9nHb7lt7j-c_UO92qm60DbrBqNGdnjMGajlitNdjzE
+
+{
+  "content": "다른계정 댓글수정시도"
+}
+
+# 본인 댓글이고 수정 성공 -	200 OK + { comment: ... }
+# 댓글이 없음 or 본인 것이 아님 -	404 Not Found + { message }
+# content가 빈 값 -	400 Bad Request + { message }
+# 토큰 없음/만료됨 -	401 Unauthorized
+
+### 댓글 삭제
+DELETE http://localhost:4000/articles/7/comments/24
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTI2NDkzODEsImV4cCI6MTc1MjY1MTE4MSwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.n9nHb7lt7j-c_UO92qm60DbrBqNGdnjMGajlitNdjzE
+
+
+### ✅ 댓글 좋아요 토글
+POST http://localhost:4000/articles/12/comments/23/like
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic2NvcGUiOiJhY2Nlc3MiLCJpYXQiOjE3NTM0MTA5ODAsImV4cCI6MTc1MzQxMjc4MCwiaXNzIjoic3AtcGFuZGEtbWFya2V0In0.nOlbNxwOd5QWNF2MsILW1Zn1rOJ3XJXYNJPx8bV9q7A
