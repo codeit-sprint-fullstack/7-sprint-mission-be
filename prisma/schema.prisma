@@ -14,20 +14,21 @@ datasource db {
 }
 
 model User {
-  id        Int                @id @default(autoincrement())
-  email     String             @unique
-  password  String
-  nickname  String
-  image     String?
-  articles  Article[]
-  products  Product[]
-  articleComments ArticleComment[]
-  productComments ProductComment[]
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  password            String
+  nickname            String
+  image               String?
+  articles            Article[]
+  products            Product[]
+  articleComments     ArticleComment[]
+  productComments     ProductComment[]
   articleCommentLikes ArticleCommentLike[]
   productCommentLikes ProductCommentLike[]
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  deletedAt DateTime? //소프트 삭제
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime? //소프트 삭제
+  ArticleLike         ArticleLike[]
 }
 
 model Article {
@@ -41,7 +42,19 @@ model Article {
   comments    ArticleComment[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  deletedAt DateTime?
+  deletedAt   DateTime?
+  ArticleLike ArticleLike[]
+}
+
+model ArticleLike {
+  id        Int      @id @default(autoincrement())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId]) // 유저별 중복 좋아요 방지
 }
 
 model Product {
@@ -57,19 +70,19 @@ model Product {
   comments    ProductComment[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  deletedAt DateTime?
+  deletedAt   DateTime?
 }
 
 model ArticleComment {
-  id        Int                 @id @default(autoincrement())
+  id        Int                  @id @default(autoincrement())
   content   String
-  article   Article             @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article              @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId Int
-  user      User                @relation(fields: [userId], references: [id])
+  user      User                 @relation(fields: [userId], references: [id])
   userId    Int
   likes     ArticleCommentLike[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
   deletedAt DateTime?
 }
 
@@ -87,23 +100,23 @@ model ProductComment {
 }
 
 model ArticleCommentLike {
-  id        Int             @id @default(autoincrement())
-  comment   ArticleComment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  id        Int            @id @default(autoincrement())
+  comment   ArticleComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
-  user      User            @relation(fields: [userId], references: [id])
+  user      User           @relation(fields: [userId], references: [id])
   userId    Int
-  createdAt DateTime        @default(now())
+  createdAt DateTime       @default(now())
 
   @@unique([commentId, userId]) // 유저별 중복 좋아요 방지
 }
 
 model ProductCommentLike {
-  id        Int              @id @default(autoincrement())
-  comment   ProductComment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  id        Int            @id @default(autoincrement())
+  comment   ProductComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
-  user      User             @relation(fields: [userId], references: [id])
+  user      User           @relation(fields: [userId], references: [id])
   userId    Int
-  createdAt DateTime         @default(now())
+  createdAt DateTime       @default(now())
 
   @@unique([commentId, userId])
 }

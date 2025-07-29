@@ -10,7 +10,7 @@ import {
   deleteLike,
   countLikes,
 } from "../repositories/commentArticle.repository.js";
-import { toggleArticleCommentLikeWithTx } from "../utils/toggleArticleCommentLike.js";
+import { handleToggleArticleCommentLikeTx } from "../repositories/transaction/toggleArticleCommentLike.js";
 
 //댓글목록 + 유저별 liked 여부 계산
 export async function fetchCommentsByArticleId(articleId, userId) {
@@ -48,5 +48,5 @@ export async function deleteComment({ commentId, userId }) {
 // 좋아요 토글
 
 export async function toggleArticleCommentLike({ commentId, userId }) {
-  return await toggleArticleCommentLikeWithTx({ commentId, userId });
+  return await handleToggleArticleCommentLikeTx({ commentId, userId });
 }

@@ -6,7 +6,12 @@ import {
   countAllArticles,
   groupCommentCounts,
   countCommentsOfArticle,
+  findArticleLike,
+  createArticleLike,
+  deleteArticleLike,
+  countArticleLikes,
 } from "../repositories/article.repository.js";
+import { handleToggleArticleLikeTx } from "../repositories/transaction/toggleArticleLike.js";
 
 // 게시글 리스트 조회 (댓글수 포함)
 export async function getArticlesService({
@@ -17,7 +22,9 @@ export async function getArticlesService({
   const skip = (page - 1) * pageSize;
   const take = Number(pageSize);
   const sortOrder =
-    orderBy === "like" ? { likeCount: "desc" } : { updatedAt: "desc" };
+    orderBy === "like"
+      ? [{ likeCount: "desc" }, { createdAt: "desc" }]
+      : { createdAt: "desc" };
 
   const [articles, commentGroups, totalCount] = await Promise.all([
     fetchArticles({ skip, take, orderBy: sortOrder }),
@@ -37,10 +44,11 @@ export async function getArticlesService({
 }
 
 //게시글 상세 조회
-export async function getArticleDetail(articleId) {
-  const [article, commentCount] = await Promise.all([
+export async function getArticleDetail(articleId, userId) {
+  const [article, commentCount, existingLike] = await Promise.all([
     fetchArticleById(articleId),
     countCommentsOfArticle(articleId),
+    userId ? findArticleLike({ articleId, userId }) : null, //로그인사용자만 like여부 조회
   ]);
 
   if (!article) {
@@ -51,11 +59,15 @@ export async function getArticleDetail(articleId) {
     throw error;
   }
 
-  return { ...article, commentCount };
+  return { ...article, commentCount, liked: !!existingLike };
 }
 
 //글작성
 export async function handleCreateArticle(data) {
   //@TODO title content 유효성 검사 등 business logic
   return await createArticle(data);
+}
+
+export async function toggleArticleLikeService({ articleId, userId }) {
+  return await handleToggleArticleLikeTx({ articleId, userId });
 }

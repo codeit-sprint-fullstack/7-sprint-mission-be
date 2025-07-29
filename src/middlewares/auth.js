@@ -4,7 +4,7 @@ import { verifyAccessToken } from "../utils/jwt.js";
 
 export function requireAuth(req, res, next) {
   // console.log(typeof req.cookies.accessToken);
-  // console.log(" accessToken 쿠키 값:", req.cookies?.accessToken);
+  console.log(" accessToken 쿠키 값:", req.cookies?.accessToken);
   // console.log(" 전체 쿠키 객체:", req.cookies);
   const accessToken = req.cookies?.accessToken;
 
@@ -35,8 +35,9 @@ export function setUserIfExists(req, res, next) {
   try {
     const decoded = verifyAccessToken(accessToken);
     req.user = decoded;
+    // console.log("유저 인증됨 : ", req.user);
   } catch (err) {
-    // 만료되거나 위조된 토큰이어도 next(err) 안 던지고 넘어감 
+    // 만료되거나 위조된 토큰이어도 next(err) 안 던지고 넘어감
     console.warn("⚠️ 유효하지 않은 토큰:", err.message);
   }
   next();

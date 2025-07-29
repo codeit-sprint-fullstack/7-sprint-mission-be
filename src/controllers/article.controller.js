@@ -4,6 +4,7 @@ import {
   getArticleDetail,
   getArticlesService,
   handleCreateArticle,
+  toggleArticleLikeService,
 } from "../services/article.service.js";
 
 export async function getArticlesController(req, res, next) {
@@ -18,8 +19,12 @@ export async function getArticlesController(req, res, next) {
 
 export async function getArticleById(req, res, next) {
   try {
-    const articleId = req.params.id;
-    const article = await getArticleDetail(articleId);
+    const articleId = Number(req.params.id);
+    const userId = req.user?.id ? Number(req.user.id) : undefined;
+    // console.log("🐞 req.cookies:", req.cookies);
+    // console.log("🐞 req.user:", req.user);
+    // console.log("🐞 userId:", req.user?.id);
+    const article = await getArticleDetail(articleId, userId);
     res.json(article);
   } catch (err) {
     next(err);
@@ -41,5 +46,33 @@ export async function postArticle(req, res) {
   } catch (error) {
     console.error("게시글 작성 에러:", error);
     res.status(500).json({ message: "서버 에러" });
+  }
+}
+
+export async function toggleArticleLikeController(req, res, next) {
+  try {
+    const articleId = Number(req.params.id);
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "로그인이 필요합니다." });
+    }
+
+    if (isNaN(articleId)) {
+      return res.status(400).json({ message: "잘못된 게시글 ID입니다." });
+    }
+
+    const { liked, likeCount } = await toggleArticleLikeService({
+      articleId,
+      userId,
+    });
+
+    res.json({
+      liked,
+      likeCount,
+      message: liked ? "게시글 추천 완료" : "게시글 추천 취소",
+    });
+  } catch (error) {
+    console.error("❌ 게시글 추천 실패:", error.message);
+    next(error);
   }
 }

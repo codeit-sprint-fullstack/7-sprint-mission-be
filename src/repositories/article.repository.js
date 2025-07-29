@@ -31,7 +31,10 @@ export async function groupCommentCounts() {
     _count: { articleId: true },
   });
 }
-
+// [
+//   { articleId: 1, _count: { articleId: 2 } }, // articleComment id:1,2 → 2개 (id:4는 deleted)
+//   { articleId: 2, _count: { articleId: 1 } }, // id:3 → 1개
+// ]
 
 //게시글 상세+작성자
 export async function fetchArticleById(articleId) {
@@ -63,5 +66,51 @@ export async function countCommentsOfArticle(articleId) {
 export async function createArticle({ title, content, userId }) {
   return await prisma.article.create({
     data: { title, content, userId },
+  });
+}
+
+//////////  좋아요 영역  /////////
+//@TODO userId deletedAt 고려
+
+// 게시글 좋아요 존재 여부 확인
+export async function findArticleLike({ articleId, userId }) {
+  return prisma.articleLike.findUnique({
+    where: {
+      articleId_userId: {
+        articleId: Number(articleId),
+        userId: Number(userId),
+      },
+    },
+  });
+}
+
+// 게시글 좋아요 추가
+export async function createArticleLike({ articleId, userId }) {
+  return prisma.articleLike.create({
+    data: {
+      articleId,
+      userId,
+    },
+  });
+}
+
+// 게시글 좋아요 삭제
+export async function deleteArticleLike({ articleId, userId }) {
+  return prisma.articleLike.delete({
+    where: {
+      articleId_userId: {
+        articleId,
+        userId,
+      },
+    },
+  });
+}
+
+// 게시글 좋아요 수 카운팅
+export async function countArticleLikes(articleId) {
+  return prisma.articleLike.count({
+    where: {
+      articleId,
+    },
   });
 }

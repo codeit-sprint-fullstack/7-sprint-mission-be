@@ -1,10 +1,10 @@
 // src/utils/toggleArticleCommentLike.js
-import prisma from "./prismaClient.js";
+import prisma from "../../utils/prismaClient.js";
 
-export async function toggleArticleCommentLikeWithTx({ commentId, userId }) {
+export async function handleToggleArticleCommentLikeTx({ commentId, userId }) {
   return await prisma.$transaction(async (tx) => {
     // 좋아요 눌렀는지 확인
-    const existing = await tx.articleCommentLike.findUnique({
+    const existingLike = await tx.articleCommentLike.findUnique({
       where: {
         commentId_userId: {
           commentId,
@@ -13,7 +13,7 @@ export async function toggleArticleCommentLikeWithTx({ commentId, userId }) {
       },
     });
     // 이미 누른거였으면 좋아요삭제
-    if (existing) {
+    if (existingLike) {
       await tx.articleCommentLike.delete({
         where: {
           commentId_userId: {
@@ -37,7 +37,7 @@ export async function toggleArticleCommentLikeWithTx({ commentId, userId }) {
       where: { commentId },
     });
     return {
-      liked: !existing,
+      liked: !existingLike,
       likeCount,
     };
   });

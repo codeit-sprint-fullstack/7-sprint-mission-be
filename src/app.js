@@ -23,9 +23,8 @@ app.use(morgan("dev")); // 요청 로깅
 
 // ✅ 라우트 연결
 app.use("/articles", articleRoutes); // /articles, /articles/:id
-app.use("/articles",commentArticleRoutes);  // /articles/:id/comments
+app.use("/articles", commentArticleRoutes); // /articles/:id/comments
 app.use("/auth", authRoutes);
-
 
 // 🛠 에러 핸들링 미들웨어 (선택)
 app.use((err, req, res, next) => {

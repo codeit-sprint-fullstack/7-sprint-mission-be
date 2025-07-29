@@ -4,14 +4,14 @@ import {
   fetchCommentsByArticleId,
   updateComment,
   deleteComment as deleteCommentService,
-  toggleArticleCommentLike, 
+  toggleArticleCommentLike,
 } from "../services/commentArticle.service.js";
 
 export async function getComments(req, res, next) {
   const { articleId } = req.params;
   const userId = req.user?.id; // 비로그인이면 undefined
   try {
-    const comments = await fetchCommentsByArticleId(Number(articleId),userId);
+    const comments = await fetchCommentsByArticleId(Number(articleId), userId);
     res.json({ comments });
   } catch (err) {
     next(err);
@@ -105,6 +105,9 @@ export async function toggleLikeComment(req, res, next) {
 
   if (!userId) {
     return res.status(401).json({ message: "로그인이 필요합니다." });
+  }
+  if (isNaN(commentId)) {
+    return res.status(400).json({ message: "잘못된 댓글 ID입니다." });
   }
 
   try {
