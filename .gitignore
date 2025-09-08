@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS별
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# TypeScript
+*.tsbuildinfo
