@@ -1,1 +1,9 @@
-Get http://localhost:3000
+### 회원가입
+POST http://localhost:3000/auth/signup
+Content-Type: application/json 
+
+{
+    "email": "test1@naver.com",
+    "password": "test1234@",
+    "nickname": "test1234@"
+}
