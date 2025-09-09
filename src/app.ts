@@ -1,12 +1,14 @@
 import express from "express";
 import { makeAuthRoutes } from "./interface/routers/authRouter";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+
 const app = express();
 const port = 3000;
 
 app.use(morgan("dev"));
 app.use(express.json());
-
+app.use(cookieParser());
 app.get("/", (req, res, next) => {
   res.send("Hello World!");
 });
