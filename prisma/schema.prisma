@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  hashedpassword String?
+  nickname String
+  image String?
+  provider String @default("local")
+  providerId String? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products Product[]
+  comments Comment[]
+  boardPosts BoardPost[]
+  boardComments BoardComment[]
+  productLikes ProductLike[]
+  boardPostLikes BoardPostLike[]
+  @@unique([provider, providerId])
+}
+
+model Product {
+  id String @id @default(uuid())
+  title String
+  description String
+  price Int
+  isSold Boolean @default(false)
+  sellerId String
+  user User @relation(fields: [sellerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  likeCount Int @default(0)
+  commentCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tags ProductTag[]  
+  comments Comment[] 
+  images ProductImage[]
+  likeUser ProductLike[]
+  
+}
+
+model ProductTag {
+  id String @id @default(uuid())
+  name String
+  productId String
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  @@unique([productId, name])
+}
+
+model ProductImage {
+  id        String    @id @default(uuid())
+  url       String    
+  order     Int       @default(0)
+  productId String
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  @@unique([productId, url])
+  @@unique([productId, order])
+}
+
+model Comment {
+  id String @id @default(uuid())
+  content String
+  productId String
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductLike {
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, productId])
+}
+
+model BoardPost {
+  id String @id @default(uuid())
+  title String
+  content String
+  image String?
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade )
+  likeCount Int @default(0)
+  commentCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comments BoardComment[]
+  likeUser BoardPostLike[]
+}
+
+model BoardComment {
+  id String @id @default(uuid())
+  content String
+  boardPostId String
+  boardPost BoardPost @relation(fields: [boardPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade )
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BoardPostLike {
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boardPostId String
+  boardPost   BoardPost @relation(fields: [boardPostId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@id([userId, boardPostId])
+}
